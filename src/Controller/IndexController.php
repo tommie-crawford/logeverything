@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -10,14 +9,14 @@ use Symfony\Component\Routing\Attribute\Route;
 final class IndexController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function index(AuthenticationUtils $authenticationUtils): Response
+    public function index(): Response
     {
-        $error = $authenticationUtils->getLastAuthenticationError();
+        return $this->redirectToRoute('dashboard');
+    }
 
-        return $this->render('index.html.twig', [
-            'controller_name' => 'LoginController',
-            'error'         => $error,
-            'last_username' => $authenticationUtils->getLastUsername() ?? 'Crawford',
-        ]);
+    #[Route('/dashboard', name: 'dashboard')]
+    public function dashboard(): Response
+    {
+        return $this->render('index.html.twig');
     }
 }
