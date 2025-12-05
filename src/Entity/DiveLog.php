@@ -54,7 +54,7 @@ class DiveLog
 
     public function getNotes(): ?string
     {
-        return $this->notes();
+        return $this->notes;
     }
 
     public function setNotes(string $notes): static
