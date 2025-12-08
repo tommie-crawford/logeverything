@@ -2,7 +2,9 @@
 
 namespace App\Controller\DiveLog;
 
+use App\Message\DiveLogMessage;
 use Doctrine\ORM\EntityManagerInterface;
+use http\Message;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,11 +12,12 @@ use Symfony\Component\Routing\Attribute\Route;
 Use App\Entity\DiveLog;
 use App\Form\DiveLogType;
 use App\Service\DiveLogManager;
+Use Symfony\Component\Messenger\MessageBusInterface;
 
 class DiveLogFormController extends AbstractController
 {
     #[Route('/divelog/new', name: 'app_divelog_new')]
-    public function new(Request $request, DiveLogManager $manager): Response
+    public function new(Request $request, DiveLogManager $manager, MessageBusInterface $messageBus): Response
     {
         $divelog = new DiveLog();
 
@@ -22,9 +25,8 @@ class DiveLogFormController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $manager->save($divelog);
-
-            $this->addFlash('success', 'Dive saved!');
+            $message = $manager->save($divelog);
+            $messageBus->dispatch($message);
 
             return $this->redirectToRoute('dashboard');
         }

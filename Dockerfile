@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN pecl install amqp
 
-RUN echo "extension=amqp.so" > /usr/local/etc/php/conf.d/amqp.ini
+RUN echo "extension=amqp.so" > /usr/local/etc/php/conf.d/docker-php-ext-amqp.ini
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
