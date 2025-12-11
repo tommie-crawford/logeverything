@@ -1,4 +1,4 @@
-## Divelog
+## LogEveryThing
 
 Ik gebruik deze applicatie om al mijn hobbies & sportactiviteiten te loggen. Ik wil hiermee ervaring krijgen in het symfony framework. 
 
