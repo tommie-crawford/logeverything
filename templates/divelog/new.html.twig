@@ -37,6 +37,24 @@
             {{ form_errors(form.notes) }}
         </div>
 
+        <div class="mb-2 col-2">
+            {{ form_label(form.maxDepth, null, { label_attr: { class: 'form-label' } }) }}
+            {{ form_widget(form.maxDepth, { attr: { class: 'form-control' } }) }}
+            {{ form_errors(form.maxDepth) }}
+        </div>
+
+        <div class="mb-2 col-3">
+            {{ form_label(form.course, null, { label_attr: { class: 'form-label' } }) }}
+            {{ form_widget(form.course, { attr: { class: 'form-control' } }) }}
+            {{ form_errors(form.course) }}
+        </div>
+
+        <div class="mb-2 col-2">
+            {{ form_label(form.duration, null, { label_attr: { class: 'form-label' } }) }}
+            {{ form_widget(form.duration, { attr: { class: 'form-control' } }) }}
+            {{ form_errors(form.duration) }}
+        </div>
+
         <div class="mb-2 col-6">
             {{ form_label(form.images, null, { label_attr: { class: 'form-label' } }) }}
             {{ form_widget(form.images, { attr: { class: 'form-control' } }) }}

@@ -30,7 +30,7 @@ class DiveLogFormController extends AbstractController
 
             $images = $photoUploadService->store($files);
 
-            $message = $manager->save($divelog, $images);
+            $message = $manager->createMessage($divelog, $images);
             $messageBus->dispatch($message);
 
             return $this->redirectToRoute('dashboard');

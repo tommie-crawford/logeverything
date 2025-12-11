@@ -25,10 +25,19 @@ class DiveLog
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $notes = null;
 
+    #[ORM\Column]
+    private ?int $maxDepth = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $course = null;
+
+    #[ORM\Column]
+    private ?float $duration = null;
+
     /**
      * @var Collection<int, DiveLogPhoto>
      */
-    #[ORM\OneToMany(targetEntity: DiveLogPhoto::class, mappedBy: 'divelog')]
+    #[ORM\OneToMany(targetEntity: DiveLogPhoto::class, mappedBy: 'divelog', cascade: ['persist', 'remove'])]
     private Collection $diveLogPhotos;
 
     public function __construct()
@@ -105,5 +114,35 @@ class DiveLog
         }
 
         return $this;
+    }
+
+    public function getMaxDepth(): ?int
+    {
+        return $this->maxDepth;
+    }
+
+    public function setMaxDepth(?int $maxDepth): void
+    {
+        $this->maxDepth = $maxDepth;
+    }
+
+    public function getCourse(): ?string
+    {
+        return $this->course;
+    }
+
+    public function setCourse(?string $course): void
+    {
+        $this->course = $course;
+    }
+
+    public function getDuration(): ?float
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?float $duration): void
+    {
+        $this->duration = $duration;
     }
 }

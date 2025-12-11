@@ -12,20 +12,24 @@ class DiveLogManager
         private EntityManagerInterface $em
     ) {}
 
-    public function save(DiveLog $diveLog, array $images): DiveLogMessage
+    public function createMessage(DiveLog $diveLog, array $images): DiveLogMessage
     {
 
         if ($diveLog->getDate() > new \DateTimeImmutable('today')) {
             throw new InvalidArgumentException('Dive date cannot be in the future.');
         }
 
-        $payload = [
-            'date' => $diveLog->getDate(),
-            'location' => $diveLog->getLocation(),
-            'notes' => $diveLog->getNotes(),
-            'images' => $images,
-        ];
+        $dateString = $diveLog->getDate()->format('Y-m-d');
 
-        return new DiveLogMessage($payload);
+        return new  DiveLogMessage(
+            date:     $dateString,
+            location: $diveLog->getLocation(),
+            notes:    $diveLog->getNotes(),
+            images:   $images, // afkomstig uit PhotoUploadService
+            maxDepth: $diveLog->getMaxDepth(),
+            course: $diveLog->getCourse(),
+            duration: $diveLog->getDuration(),
+
+        );
     }
 }

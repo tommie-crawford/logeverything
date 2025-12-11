@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\DiveLogRepository;
 
 final class IndexController extends AbstractController
 {
@@ -15,8 +16,10 @@ final class IndexController extends AbstractController
     }
 
     #[Route('/dashboard', name: 'dashboard')]
-    public function dashboard(): Response
+    public function dashboard(DiveLogRepository $diveLogRepository): Response
     {
-        return $this->render('index.html.twig');
+        $dives = $diveLogRepository->findBy([], ['date' => 'DESC']);
+
+        return $this->render('index.html.twig', ['dives' => $dives]);
     }
 }

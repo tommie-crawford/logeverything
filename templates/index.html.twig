@@ -4,6 +4,7 @@
 {# ... #}
 
 {% block content %}
+
     <div class="container-fluid">
         <div class="row">
                 <div class="table-responsive">
@@ -13,26 +14,27 @@
                             <th>Date</th>
                             <th>Location</th>
                             <th>MaxDepth</th>
+                            <th>Duration</th>
+                            <th>Course</th>
+                            <th>Notes</th>
+                            <th>Bewerken</th>
+                            <th>Verwijderen</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>31-07-1990</td>
-                            <td>Helsdingen, zwembad</td>
-                            <td>3</td>
-                        </tr>
 
-                        <tr>
-                            <td>31-07-1990</td>
-                            <td>Helsdingen, zwembad</td>
-                            <td>3</td>
-                        </tr>
-
-                        <tr>
-                            <td>31-07-1990</td>
-                            <td>Helsdingen, zwembad</td>
-                            <td>3</td>
-                        </tr>
+                        {% for dive in dives %}
+                            <tr>
+                                <td>{{ dive.date|date('d-m-Y') }}</td>
+                                <td>{{ dive.location }}</td>
+                                <td>{{ dive.maxDepth }}</td>
+                                <td>{{ dive.duration }}</td>
+                                <td>{{ dive.course }}</td>
+                                <td>{{ dive.notes }}</td>
+                                <td><a href="#">Edit</a></td>
+                                <td><a href="#">Delete</a></td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>

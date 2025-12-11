@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\DiveLog;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,6 +32,18 @@ class DiveLogType extends AbstractType
                         maxSize: '5M'
                     ),
                 ],
+            ])
+            ->add('maxDepth', IntegerType::class, [
+                'label' => 'Max depth',
+                'required' => TRUE,
+            ])
+            ->add('course', null, [
+                'label' => 'Course',
+                'required' => FALSE,
+            ])
+            ->add('duration', IntegerType::class, [
+                'label' => 'Duration',
+                'required' => TRUE,
             ])
         ;
     }
