@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Image;
 
 class DiveLogType extends AbstractType
@@ -24,13 +25,17 @@ class DiveLogType extends AbstractType
             // 🔽 nieuw veld voor uploads
             ->add('images', FileType::class, [
                 'label' => 'Picture\'s',
-                'mapped' => false,      // heel belangrijk: bestaat niet als property op DiveLog
+                'mapped' => false,
                 'required' => false,
-                'multiple' => true,     // meerdere foto’s tegelijk
+                'multiple' => true,
                 'constraints' => [
-                    new Image(
-                        maxSize: '5M'
-                    ),
+                    new All([
+                        'constraints' => [
+                            new Image([
+                                'maxSize' => '5M',
+                            ]),
+                        ],
+                    ]),
                 ],
             ])
             ->add('maxDepth', IntegerType::class, [

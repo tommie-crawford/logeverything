@@ -33,31 +33,52 @@ class DiveLogFormController extends AbstractController
             $message = $manager->createMessage($divelog, $images);
             $messageBus->dispatch($message);
 
-            return $this->redirectToRoute('dashboard');
+            $this->addFlash('success', 'Dive added!');
+
+            return $this->redirectToRoute('app_divelog_new');
         }
 
-        return $this->render('divelog/new.html.twig', [
+        return $this->render('divelog/form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-//    #[Route('/divelog/{id}/edit', name: 'app_divelog_edit')]
-//    public function edit(Divelog $divelog, Request $request, EntityManagerInterface $em): Response
-//    {
-//        $form = $this->createForm(DivelogType::class, $divelog);
-//        $form->handleRequest($request);
-//
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $em->flush(); // entity is already managed
-//
-//            $this->addFlash('success', 'Dive updated!');
-//
-//            return $this->redirectToRoute('app_divelog_edit', ['id' => $divelog->getId()]);
-//        }
-//
-//        return $this->render('divelog/edit.html.twig', [
-//            'form' => $form->createView(),
-//            'divelog' => $divelog,
-//        ]);
-//    }
+    #[Route('/divelog/{id}/edit', name: 'app_divelog_edit')]
+    public function edit(Divelog $divelog, Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(DivelogType::class, $divelog);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            dd((string) $form->getErrors(true, false));
+        }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush(); // entity is already managed
+
+            $this->addFlash('success', 'Dive updated!');
+
+            return $this->redirectToRoute('app_divelog_edit', ['id' => $divelog->getId()]);
+        }
+
+        return $this->render('divelog/form.html.twig', [
+            'form' => $form->createView(),
+            'divelog' => $divelog,
+        ]);
+    }
+
+    #[Route('/divelog/{id}/delete', name: 'app_divelog_delete', methods: ['POST'])]
+    public function delete(DiveLog $diveLog, Request $request, EntityManagerInterface $em): Response
+    {
+        // CSRF check
+        if ($this->isCsrfTokenValid('delete_divelog_'.$diveLog->getId(), $request->request->get('_token'))) {
+            $em->remove($diveLog);
+            $em->flush();
+
+            $this->addFlash('success', 'Dive deleted!');
+        } else {
+            $this->addFlash('error', 'Invalid CSRF token.');
+        }
+
+        return $this->redirectToRoute('dashboard');
+    }
+
 }
