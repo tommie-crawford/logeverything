@@ -7,12 +7,7 @@ Onderstaande stappen tonen hoe je de RabbitMQ-transporten aanmaakt, een testberi
 docker compose exec app php bin/console messenger:setup-transports
  ```
 
-### 2. Testbericht versturen
+### 2. Consumer starten
 ```bash
-docker compose exec app php bin/console app:test-messenger
- ```
-
-### 3. Consumer starten
-```bash
-docker compose exec app php bin/console messenger:consume async -vv
+docker compose exec app php bin/console messenger:consume divelog -vv
  ```
