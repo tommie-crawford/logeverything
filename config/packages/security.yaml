@@ -28,7 +28,7 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                default_target_path: /dashboard
+                default_target_path: /duiklog/overzicht
                 always_use_default_target_path: true
 
             logout:

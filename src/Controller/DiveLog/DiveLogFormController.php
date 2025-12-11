@@ -2,9 +2,7 @@
 
 namespace App\Controller\DiveLog;
 
-use App\Message\DiveLogMessage;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Message;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +15,7 @@ use App\Service\PhotoUploadService;
 
 class DiveLogFormController extends AbstractController
 {
-    #[Route('/divelog/new', name: 'app_divelog_new')]
+    #[Route('/duiklog/nieuw', name: 'app_divelog_new')]
     public function new(Request $request, DiveLogManager $manager, MessageBusInterface $messageBus, PhotoUploadService $photoUploadService): Response
     {
         $divelog = new DiveLog();
@@ -25,7 +23,7 @@ class DiveLogFormController extends AbstractController
         $form = $this->createForm(DiveLogType::class, $divelog);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $files = $form->get('images')->getData() ?? [];
 
             $images = $photoUploadService->store($files);
@@ -43,7 +41,7 @@ class DiveLogFormController extends AbstractController
         ]);
     }
 
-    #[Route('/divelog/{id}/edit', name: 'app_divelog_edit')]
+    #[Route('/duiklog/{id}/bewerken', name: 'app_divelog_edit')]
     public function edit(Divelog $divelog, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(DivelogType::class, $divelog);
@@ -65,7 +63,7 @@ class DiveLogFormController extends AbstractController
         ]);
     }
 
-    #[Route('/divelog/{id}/delete', name: 'app_divelog_delete', methods: ['POST'])]
+    #[Route('/duiklog/{id}/verwijderen', name: 'app_divelog_delete', methods: ['POST'])]
     public function delete(DiveLog $diveLog, Request $request, EntityManagerInterface $em): Response
     {
         // CSRF check
@@ -78,7 +76,7 @@ class DiveLogFormController extends AbstractController
             $this->addFlash('error', 'Invalid CSRF token.');
         }
 
-        return $this->redirectToRoute('dashboard');
+        return $this->redirectToRoute('duiklog_overzicht');
     }
 
 }

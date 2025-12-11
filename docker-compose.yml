@@ -3,18 +3,18 @@ version: "3.9"
 services:
     app:
         build: .
-        container_name: divelog-api-php
+        container_name: logeverything-api-php
         working_dir: /var/www/html
         volumes:
             - ./:/var/www/html
         environment:
             APP_ENV: dev
             APP_DEBUG: 1
-            DATABASE_URL: ${DATABASE_URL}
+            DATABASE_URL: "mysql://symfony:symfony@db:3306/symfony?serverVersion=8.0.32&charset=utf8mb4"
 
     web:
         image: nginx:stable
-        container_name: divelog-api-nginx
+        container_name: logeverything-api-nginx
         ports:
             - "8081:80"
         volumes:
@@ -25,12 +25,12 @@ services:
 
     db:
         image: mysql:8
-        container_name: divelog-api-db
+        container_name: logeverything-api-db
         environment:
-            MYSQL_DATABASE: ${MYSQL_DATABASE}
-            MYSQL_USER: ${MYSQL_USER}
-            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: "symfony"
+            MYSQL_USER: "symfony"
+            MYSQL_PASSWORD: "symfony"
+            MYSQL_ROOT_PASSWORD: "root"
         ports:
             - "3306:3306"
         volumes:

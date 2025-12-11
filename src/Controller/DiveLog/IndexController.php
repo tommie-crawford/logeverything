@@ -1,25 +1,19 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\DiveLog;
 
+use App\Repository\DiveLogRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Repository\DiveLogRepository;
 
 final class IndexController extends AbstractController
 {
-    #[Route('/', name: 'home')]
-    public function index(): Response
-    {
-        return $this->redirectToRoute('dashboard');
-    }
-
-    #[Route('/dashboard', name: 'dashboard')]
+    #[Route('/duiklog/overzicht', name: 'duiklog_overzicht')]
     public function dashboard(DiveLogRepository $diveLogRepository): Response
     {
         $dives = $diveLogRepository->findBy([], ['date' => 'DESC']);
 
-        return $this->render('index.html.twig', ['dives' => $dives]);
+        return $this->render('/divelog/dashboard.html.twig', ['dives' => $dives]);
     }
 }
