@@ -29,7 +29,7 @@ services:
                 condition: service_healthy
             db:
                 condition: service_healthy
-        command: ["php", "bin/console", "messenger:consume", "async", "-vv", "--memory-limit=256M"]
+        command: ["sh", "docker/worker.sh"]
         restart: unless-stopped
 
     web:

@@ -18,8 +18,5 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --prefer-dist --no-scripts --no-progress
 
 COPY . .
-#
-RUN composer dump-autoload --optimize \
-    && php bin/console cache:warmup --env=prod
 
 CMD ["php-fpm"]
