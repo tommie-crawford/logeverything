@@ -23,7 +23,7 @@
                         <td>{{ catch.weight ?? '-' }}</td>
                         <td>{{ catch.length ?? '-' }}</td>
                         <td>
-                            <div class="btn-group" role="group">
+                            <div class="d-flex gap-2">
                                 <a href="{{ path('app_fishinglog_edit', {id: catch.id}) }}" class="btn btn-sm btn-success">Bewerken</a>
                                 {{ macros.delete_button('app_fishinglog_delete', {id: catch.id}, 'delete_fishinglog_' ~ catch.id, 'Weet je zeker dat je deze vangst wilt verwijderen?') }}
                             </div>

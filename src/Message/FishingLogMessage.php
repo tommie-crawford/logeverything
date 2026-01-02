@@ -2,8 +2,10 @@
 
 namespace App\Message;
 
+use App\Enum\FishType;
+
 /**
- * Immutable DTO voor het aanmaken van een DiveLog.
+ * Immutable DTO voor het aanmaken van een FishingLog.
  */
 final class FishingLogMessage
 {

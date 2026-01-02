@@ -29,12 +29,12 @@ class FishingLogFormController extends AbstractController
 
             $images = $photoUploadService->store($files);
 
-            $message = $manager->createMessage($divelog, $images);
+            $message = $manager->createMessage($fishingLog, $images);
             $messageBus->dispatch($message);
 
-            $this->addFlash('success', 'Dive added!');
+            $this->addFlash('success', 'Vangst toegevoegd!');
 
-            return $this->redirectToRoute('app_divelog_new');
+            return $this->redirectToRoute('app_fishinglog_new');
         }
 
         return $this->render('fishinglog/form.html.twig', [
@@ -42,10 +42,10 @@ class FishingLogFormController extends AbstractController
         ]);
     }
 
-    #[Route('/vissen/{id}/bewerken', name: 'app_divelog_edit')]
-    public function edit(Divelog $divelog, Request $request, EntityManagerInterface $em): Response
+    #[Route('/vissen/{id}/bewerken', name: 'app_fishinglog_edit')]
+    public function edit(FishingLog $fishingLog, Request $request, EntityManagerInterface $em): Response
     {
-        $form = $this->createForm(DivelogType::class, $divelog);
+        $form = $this->createForm(FishingLogType::class, $fishingLog);
         $form->handleRequest($request);
         if ($form->isSubmitted() && !$form->isValid()) {
             dd((string) $form->getErrors(true, false));
@@ -53,31 +53,31 @@ class FishingLogFormController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush(); // entity is already managed
 
-            $this->addFlash('success', 'Dive updated!');
+            $this->addFlash('success', 'Vangst bijgewerkt!');
 
-            return $this->redirectToRoute('app_divelog_edit', ['id' => $divelog->getId()]);
+            return $this->redirectToRoute('app_fishinglog_edit', ['id' => $fishingLog->getId()]);
         }
 
-        return $this->render('divelog/form.html.twig', [
+        return $this->render('fishinglog/form.html.twig', [
             'form' => $form->createView(),
-            'divelog' => $divelog,
+            'fishinglog' => $fishingLog,
         ]);
     }
 
-    #[Route('/vissen/{id}/verwijderen', name: 'app_divelog_delete', methods: ['POST'])]
-    public function delete(DiveLog $diveLog, Request $request, EntityManagerInterface $em): Response
+    #[Route('/vissen/{id}/verwijderen', name: 'app_fishinglog_delete', methods: ['POST'])]
+    public function delete(FishingLog $fishingLog, Request $request, EntityManagerInterface $em): Response
     {
         // CSRF check
-        if ($this->isCsrfTokenValid('delete_divelog_'.$diveLog->getId(), $request->request->get('_token'))) {
-            $em->remove($diveLog);
+        if ($this->isCsrfTokenValid('delete_fishinglog_'.$fishingLog->getId(), $request->request->get('_token'))) {
+            $em->remove($fishingLog);
             $em->flush();
 
-            $this->addFlash('success', 'Dive deleted!');
+            $this->addFlash('success', 'Vangst verwijderd!');
         } else {
             $this->addFlash('error', 'Invalid CSRF token.');
         }
 
-        return $this->redirectToRoute('duiklog_overzicht');
+        return $this->redirectToRoute('vissen_overzicht');
     }
 
 }

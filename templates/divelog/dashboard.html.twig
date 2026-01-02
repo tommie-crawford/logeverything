@@ -27,7 +27,7 @@
                         <td>{{ dive.course ?? '-' }}</td>
                         <td>{{ dive.notes ?? '-' }}</td>
                         <td>
-                            <div class="btn-group" role="group">
+                            <div class="d-flex gap-2">
                                 <a href="{{ path('app_divelog_edit', {id: dive.id}) }}" class="btn btn-sm btn-success">Bewerken</a>
                                 {{ macros.delete_button('app_divelog_delete', {id: dive.id}, 'delete_divelog_' ~ dive.id, 'Weet je zeker dat je deze duik wilt verwijderen?') }}
                             </div>
