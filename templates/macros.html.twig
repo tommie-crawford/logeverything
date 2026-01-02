@@ -1,0 +1,38 @@
+{# Macros voor herbruikbare form components #}
+{% macro flash_messages() %}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            {% set alertClass = (label == 'error') ? 'danger' : label %}
+            <div class="alert alert-{{ alertClass }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro form_field_row(field, label, required = false, helpText = null) %}
+    <div class="mb-3">
+        {{ form_label(field, label ~ (required ? ' *' : ''), { label_attr: { class: 'form-label' } }) }}
+        {{ form_widget(field, { attr: { class: 'form-control' } }) }}
+        {% if helpText %}
+            <small class="form-text text-muted">{{ helpText }}</small>
+        {% endif %}
+        {{ form_errors(field) }}
+    </div>
+{% endmacro %}
+
+{% macro delete_button(routeName, routeParams, csrfTokenId, confirmMessage) %}
+    <form
+        method="post"
+        action="{{ path(routeName, routeParams) }}"
+        style="display:inline"
+        onsubmit="return confirm('{{ confirmMessage }}');"
+    >
+        <input type="hidden" name="_token" value="{{ csrf_token(csrfTokenId) }}">
+        <button type="submit" class="btn btn-sm btn-danger">
+            Verwijderen
+        </button>
+    </form>
+{% endmacro %}
+

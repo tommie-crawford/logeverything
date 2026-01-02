@@ -1,40 +1,33 @@
 {% extends 'layout.html.twig' %}
+{% import 'macros.html.twig' as macros %}
 
-{% block title %}Nieuwe vangst{% endblock %}
+{% block title %}{% if fishinglog is defined %}Vangst bewerken{% else %}Nieuwe vangst{% endif %}{% endblock %}
 
 {% block content %}
     <div class="container my-4">
-        <h1 class="mb-4">Nieuwe vangst</h1>
+        <h1 class="mb-4">{% if fishinglog is defined %}Vangst bewerken{% else %}Nieuwe vangst{% endif %}</h1>
 
-        {# Flash messages as Bootstrap alerts #}
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                {% set alertClass = (label == 'error') ? 'danger' : label %}
-                <div class="alert alert-{{ alertClass }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        {% endfor %}
+        {{ macros.flash_messages() }}
 
         {{ form_start(form) }}
+        {{ macros.form_field_row(form.date, 'Datum', true) }}
+        {% if form.type is defined %}
+            {{ macros.form_field_row(form.type, 'Type vis', true) }}
+        {% endif %}
+        {% if form.weight is defined %}
+            {{ macros.form_field_row(form.weight, 'Gewicht (kg)', false) }}
+        {% endif %}
+        {% if form.length is defined %}
+            {{ macros.form_field_row(form.length, 'Lengte (cm)', false) }}
+        {% endif %}
+        {{ macros.form_field_row(form.images, 'Afbeeldingen', false, 'Meerdere afbeeldingen toevoegen is mogelijk') }}
 
-        <div class="mb-2 col-2">
-            {{ form_label(form.date, 'Datum *', { label_attr: { class: 'form-label' } }) }}
-            {{ form_widget(form.date, { attr: { class: 'form-control' } }) }}
-            {{ form_errors(form.date) }}
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Opslaan</button>
+            {% if fishinglog is defined %}
+                <a href="{{ path('vissen_overzicht') }}" class="btn btn-secondary">Annuleren</a>
+            {% endif %}
         </div>
-
-       <div class="mb-2 col-6">
-            {{ form_label(form.images, 'Afbeeldingen', { label_attr: { class: 'form-label' } }) }}
-            {{ form_widget(form.images, { attr: { class: 'form-control' } }) }}
-            <small class="form-text text-muted">
-                Meerdere afbeeldingen toevoegen is mogelijk
-            </small>
-            {{ form_errors(form.images) }}
-        </div>
-
-        <button type="submit" class="btn btn-primary">Opslaan</button>
 
         {{ form_end(form) }}
     </div>

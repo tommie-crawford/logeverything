@@ -30,15 +30,15 @@
 
                         <!-- Groep: Duiken -->
                         <li class="nav-item mt-3">
-                            <span class="nav-link text-muted" style="font-weight: bold;">Duiken</span>
+                            <span class="nav-link text-muted fw-bold">Duiken</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/duiklog/overzicht">
+                            <a class="nav-link" href="{{ path('duiklog_overzicht') }}">
                                 Overzicht
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/duiklog/nieuw">
+                            <a class="nav-link" href="{{ path('app_divelog_new') }}">
                                 <span data-feather="plus"></span>
                                 Nieuwe duik toevoegen
                             </a>
@@ -46,16 +46,16 @@
 
                         <!-- Groep: Vissen -->
                         <li class="nav-item mt-4">
-                            <span class="nav-link text-muted" style="font-weight: bold;">Vissen</span>
+                            <span class="nav-link text-muted fw-bold">Vissen</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/vissen/overzicht">
+                            <a class="nav-link" href="{{ path('vissen_overzicht') }}">
                                 <span data-feather="fish"></span>
                                 Overzicht
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/vissen/nieuw">
+                            <a class="nav-link" href="{{ path('app_fishinglog_new') }}">
                                 <span data-feather="plus"></span>
                                 Nieuwe vangst toevoegen
                             </a>

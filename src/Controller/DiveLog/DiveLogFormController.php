@@ -28,6 +28,7 @@ class DiveLogFormController extends AbstractController
 
             $images = $photoUploadService->store($files);
 
+
             $message = $manager->createMessage($divelog, $images);
             $messageBus->dispatch($message);
 
