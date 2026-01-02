@@ -2,39 +2,42 @@
 
 namespace App\Controller\FishingLog;
 
+use App\Entity\FishingLog;
+use App\Form\FishingLogType;
+use App\Service\FishingLogManager;
+use App\Service\PhotoUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
-Use App\Entity\FishingLog;
-use App\Form\FishingLogType;
-use App\Service\FishingLogManager;
-Use Symfony\Component\Messenger\MessageBusInterface;
-use App\Service\PhotoUploadService;
 
 class FishingLogFormController extends AbstractController
 {
+    public function __construct(
+        private readonly FishingLogManager $manager,
+        private readonly MessageBusInterface $messageBus,
+        private readonly PhotoUploadService $photoUploadService,
+    ) {}
+
     #[Route('/vissen/nieuw', name: 'app_fishinglog_new')]
-    public function new(Request $request, FishingLogManager $manager, MessageBusInterface $messageBus, PhotoUploadService $photoUploadService): Response
+    public function new(Request $request): Response
     {
         $fishingLog = new FishingLog();
-
         $form = $this->createForm(FishingLogType::class, $fishingLog);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $files = $form->get('images')->getData() ?? [];
+            $images = $this->photoUploadService->store($files);
 
-            $images = $photoUploadService->store($files);
-
-            $message = $manager->createMessage($fishingLog, $images);
-            $messageBus->dispatch($message);
+            $message = $this->manager->createMessage($fishingLog, $images);
+            $this->messageBus->dispatch($message);
 
             $this->addFlash('success', 'Vangst toegevoegd!');
 
-            return $this->redirectToRoute('app_fishinglog_new');
+            return $this->redirectToRoute('vissen_overzicht');
         }
 
         return $this->render('fishinglog/form.html.twig', [
@@ -47,15 +50,13 @@ class FishingLogFormController extends AbstractController
     {
         $form = $this->createForm(FishingLogType::class, $fishingLog);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            dd((string) $form->getErrors(true, false));
-        }
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush(); // entity is already managed
+            $em->flush();
 
             $this->addFlash('success', 'Vangst bijgewerkt!');
 
-            return $this->redirectToRoute('app_fishinglog_edit', ['id' => $fishingLog->getId()]);
+            return $this->redirectToRoute('vissen_overzicht');
         }
 
         return $this->render('fishinglog/form.html.twig', [
@@ -67,17 +68,17 @@ class FishingLogFormController extends AbstractController
     #[Route('/vissen/{id}/verwijderen', name: 'app_fishinglog_delete', methods: ['POST'])]
     public function delete(FishingLog $fishingLog, Request $request, EntityManagerInterface $em): Response
     {
-        // CSRF check
-        if ($this->isCsrfTokenValid('delete_fishinglog_'.$fishingLog->getId(), $request->request->get('_token'))) {
-            $em->remove($fishingLog);
-            $em->flush();
+        if (!$this->isCsrfTokenValid('delete_fishinglog_'.$fishingLog->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Ongeldig CSRF token.');
 
-            $this->addFlash('success', 'Vangst verwijderd!');
-        } else {
-            $this->addFlash('error', 'Invalid CSRF token.');
+            return $this->redirectToRoute('vissen_overzicht');
         }
+
+        $em->remove($fishingLog);
+        $em->flush();
+
+        $this->addFlash('success', 'Vangst verwijderd!');
 
         return $this->redirectToRoute('vissen_overzicht');
     }
-
 }

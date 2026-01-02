@@ -2,39 +2,42 @@
 
 namespace App\Controller\DiveLog;
 
+use App\Entity\DiveLog;
+use App\Form\DiveLogType;
+use App\Service\DiveLogManager;
+use App\Service\PhotoUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
-Use App\Entity\DiveLog;
-use App\Form\DiveLogType;
-use App\Service\DiveLogManager;
-Use Symfony\Component\Messenger\MessageBusInterface;
-use App\Service\PhotoUploadService;
 
 class DiveLogFormController extends AbstractController
 {
-    #[Route('/duiklog/nieuw', name: 'app_divelog_new')]
-    public function new(Request $request, DiveLogManager $manager, MessageBusInterface $messageBus, PhotoUploadService $photoUploadService): Response
-    {
-        $divelog = new DiveLog();
+    public function __construct(
+        private readonly DiveLogManager $manager,
+        private readonly MessageBusInterface $messageBus,
+        private readonly PhotoUploadService $photoUploadService,
+    ) {}
 
-        $form = $this->createForm(DiveLogType::class, $divelog);
+    #[Route('/duiklog/nieuw', name: 'app_divelog_new')]
+    public function new(Request $request): Response
+    {
+        $diveLog = new DiveLog();
+        $form = $this->createForm(DiveLogType::class, $diveLog);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $files = $form->get('images')->getData() ?? [];
+            $images = $this->photoUploadService->store($files);
 
-            $images = $photoUploadService->store($files);
+            $message = $this->manager->createMessage($diveLog, $images);
+            $this->messageBus->dispatch($message);
 
+            $this->addFlash('success', 'Duik toegevoegd!');
 
-            $message = $manager->createMessage($divelog, $images);
-            $messageBus->dispatch($message);
-
-            $this->addFlash('success', 'Dive added!');
-
-            return $this->redirectToRoute('app_divelog_new');
+            return $this->redirectToRoute('duiklog_overzicht');
         }
 
         return $this->render('divelog/form.html.twig', [
@@ -43,41 +46,39 @@ class DiveLogFormController extends AbstractController
     }
 
     #[Route('/duiklog/{id}/bewerken', name: 'app_divelog_edit')]
-    public function edit(Divelog $divelog, Request $request, EntityManagerInterface $em): Response
+    public function edit(DiveLog $diveLog, Request $request, EntityManagerInterface $em): Response
     {
-        $form = $this->createForm(DivelogType::class, $divelog);
+        $form = $this->createForm(DiveLogType::class, $diveLog);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && !$form->isValid()) {
-            dd((string) $form->getErrors(true, false));
-        }
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush(); // entity is already managed
+            $em->flush();
 
-            $this->addFlash('success', 'Dive updated!');
+            $this->addFlash('success', 'Duik bijgewerkt!');
 
-            return $this->redirectToRoute('app_divelog_edit', ['id' => $divelog->getId()]);
+            return $this->redirectToRoute('duiklog_overzicht');
         }
 
         return $this->render('divelog/form.html.twig', [
             'form' => $form->createView(),
-            'divelog' => $divelog,
+            'divelog' => $diveLog,
         ]);
     }
 
     #[Route('/duiklog/{id}/verwijderen', name: 'app_divelog_delete', methods: ['POST'])]
     public function delete(DiveLog $diveLog, Request $request, EntityManagerInterface $em): Response
     {
-        // CSRF check
-        if ($this->isCsrfTokenValid('delete_divelog_'.$diveLog->getId(), $request->request->get('_token'))) {
-            $em->remove($diveLog);
-            $em->flush();
+        if (!$this->isCsrfTokenValid('delete_divelog_'.$diveLog->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Ongeldig CSRF token.');
 
-            $this->addFlash('success', 'Dive deleted!');
-        } else {
-            $this->addFlash('error', 'Invalid CSRF token.');
+            return $this->redirectToRoute('duiklog_overzicht');
         }
+
+        $em->remove($diveLog);
+        $em->flush();
+
+        $this->addFlash('success', 'Duik verwijderd!');
 
         return $this->redirectToRoute('duiklog_overzicht');
     }
-
 }
